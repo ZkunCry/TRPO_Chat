@@ -6,9 +6,9 @@
 
         public string chatRoomName { get; set; }
 
-        public User []users { get; set; }
+        public List<User> users { get; set; }
 
-
+   
 
     }
 }
