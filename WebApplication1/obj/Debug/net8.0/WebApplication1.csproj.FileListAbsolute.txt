@@ -30,3 +30,5 @@ C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\obj\Debug\net8.0\re
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\obj\Debug\net8.0\WebApplication1.pdb
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\obj\Debug\net8.0\WebApplication1.genruntimeconfig.cache
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\obj\Debug\net8.0\ref\WebApplication1.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

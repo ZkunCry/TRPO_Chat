@@ -9,7 +9,5 @@
 
         public Chat chatRoomId { get; set; }
 
-
-
     }
 }
