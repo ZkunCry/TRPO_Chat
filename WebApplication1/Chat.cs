@@ -1,14 +1,21 @@
-﻿namespace WebApplication1
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+namespace WebApplication1
 {
-    public class Chat
+
+    public class ChatRoom
     {
-        public int chatroomId { get; set; }
+        [BsonId]
+     
+        public ObjectId _Id { get; set; }
 
-        public string chatRoomName { get; set; }
+        [BsonElement("Name")]
+        public string Name { get; set; }
 
-        public List<User> users { get; set; }
+        [BsonElement("Participants")]
+        public List<User> Participants { get; set; }
 
-   
-
+        [BsonElement("Messages")]
+        public List<Message> Messages { get; set; }
     }
 }

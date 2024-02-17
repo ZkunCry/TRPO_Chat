@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using WebApplication1.Controllers;
+
 
 namespace WebApplication1.Hubs
 {
     public class ChatHub : Hub
     {
-       /* public async Task SendMessage(string user, string message)
+
+        public void SendMessageToRoom(string roomId, string senderId, string messageText)
         {
-            await Program.users.All.SendAsync("ReceiveMessage", user, message);
-        }*/
+            Clients.All.SendAsync("ReceiveMessage", roomId, senderId, messageText);
+        }
+
     }
 }
