@@ -11,6 +11,10 @@ namespace WebApplication1.Hubs
         {
             Clients.All.SendAsync("ReceiveMessage", roomId, senderId, messageText);
         }
+        public async Task JoinRoom(string roomName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
+        }
 
     }
 }

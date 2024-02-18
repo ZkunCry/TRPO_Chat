@@ -2,7 +2,7 @@ using MongoDB.Driver;
 using System.Security.Cryptography;
 using System.Text;
 using WebApplication1;
-
+using WebApplication1.ChatRoomService;
 using WebApplication1.Hubs;
 using WebApplication1.UserService;
 
@@ -53,6 +53,8 @@ internal class Program
             return client.GetDatabase("TRPOChat");
 
         });
+        builder.Services.AddSingleton<IChatRoomService, ChatRoomService>();
+
         builder.Services.AddSingleton<IUserService,UserService>();
        
 
