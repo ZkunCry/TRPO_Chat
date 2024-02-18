@@ -1,9 +1,12 @@
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System.Security.Cryptography;
 using System.Text;
 using WebApplication1;
 using WebApplication1.ChatRoomService;
 using WebApplication1.Hubs;
+using WebApplication1.jwthandler;
+using WebApplication1.middleware;
 using WebApplication1.UserService;
 
 
@@ -38,12 +41,12 @@ internal class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddCors(opt =>
         {
-            opt.AddPolicy("chat-app", builder =>
+            opt.AddPolicy(name:"chat-app", builder =>
             {
                 builder.WithOrigins("http://localhost:3000").
                 AllowAnyHeader().
-                AllowAnyMethod().
-                AllowCredentials();
+                AllowAnyMethod();
+
             });
         });
         builder.Services.AddSingleton<IMongoDatabase>(provider =>
@@ -53,6 +56,7 @@ internal class Program
             return client.GetDatabase("TRPOChat");
 
         });
+        builder.Services.AddScoped<JwtToken>();
         builder.Services.AddSingleton<IChatRoomService, ChatRoomService>();
 
         builder.Services.AddSingleton<IUserService,UserService>();
@@ -66,12 +70,15 @@ internal class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        app.UseCors("chat-app");
+
+        app.UseMiddleware<JwtMiddleware>();
 
         app.UseAuthorization();
 
         app.MapControllers();
         app.MapHub<ChatHub>("/chat");
-        app.UseCors("chat-app");
+
         app.Run();
     }
 }

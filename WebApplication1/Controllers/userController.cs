@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using WebApplication1.jwthandler;
 using WebApplication1.UserService;
 
 namespace WebApplication1.Controllers
@@ -11,16 +12,19 @@ namespace WebApplication1.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
+        private readonly JwtToken jwtTokenGenerator;
 
         public UserController(ILogger<UserController> logger, IUserService userService)
         {
             _logger = logger;
             _userService = userService;
+            
         }
         [HttpPost]
-        public async Task<IActionResult> Register(string username, string password)
+        public async Task<IActionResult> Register(string username,string password)
         {
             var existingUser = await _userService.GetUserByUsername(username);
+            _logger.LogInformation("exist:{0} ", existingUser);
             if (existingUser != null)
             {
                 return BadRequest("User already exists");

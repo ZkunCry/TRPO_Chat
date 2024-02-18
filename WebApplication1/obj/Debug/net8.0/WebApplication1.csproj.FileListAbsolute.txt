@@ -45,3 +45,9 @@ C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Zs
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
 C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\IdentityModel.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Eugene\source\repos\WebApplication1\WebApplication1\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
