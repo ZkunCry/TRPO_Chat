@@ -29,7 +29,7 @@ namespace WebApplication1.Controllers
             _chatRoomService = chatRoomService;
         }
         [HttpPost]
-        public async Task SendMessageToRoom(ObjectId roomId, string senderId, string messageText)
+        public async Task SendMessageToRoom(string roomId, string senderId, string messageText)
         {
             await _chatRoomService.SendMessage(roomId, senderId, messageText);
             await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", roomId.ToString(), senderId, messageText);

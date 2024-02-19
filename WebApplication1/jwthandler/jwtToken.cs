@@ -8,11 +8,11 @@ namespace WebApplication1.jwthandler
 {
     public class JwtToken
     {
-        private readonly string _secretKey= "300046c07bc4876a8596e83cbb34744d6462d8f7238660ad2815c1a433f90e934934c";
+        private static readonly string _secretKey= "300046c07bc4876a8596e83cbb34744d6462d8f7238660ad2815c1a433f90e934934c";
 
    
 
-        public string GenerateToken(string username)
+        public static string GenerateToken(string username)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);

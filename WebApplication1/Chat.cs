@@ -6,8 +6,8 @@ namespace WebApplication1
     public class ChatRoom
     {
         [BsonId]
-     
-        public ObjectId _Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string _Id { get; set; }
 
         [BsonElement("Name")]
         public string Name { get; set; }

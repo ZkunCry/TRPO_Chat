@@ -6,6 +6,7 @@ namespace WebApplication1.UserService
     {
         Task<User> GetUserByUsername(string userName);
         Task CreateUser(User user);
+        
     }
     public class UserService : IUserService
     {
