@@ -15,11 +15,6 @@ namespace WebApplication1
         [BsonElement("Password")]
         public string Password { get; set; }
 
-        public void ObjectIdToString()
-        {
-            this._Id = this._Id.ToString();
-        
-        }
     }
    
 }

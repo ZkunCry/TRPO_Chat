@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="6.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
     <PackageReference Include="MongoDB.Driver.Core" Version="2.23.1" />

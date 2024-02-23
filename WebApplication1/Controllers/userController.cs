@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using WebApplication1.jwthandler;
@@ -20,23 +21,26 @@ namespace WebApplication1.Controllers
             _userService = userService;
             
         }
+       
         [HttpPost]
         public async Task<IActionResult> Login(string username,string password)
         {
-            var existringUser = await _userService.GetUserByUsername(username);
-            if (existringUser == null)
+            var user = await _userService.GetUserByUsername(username);
+            if (user == null)
             {
                 return BadRequest("Such user does not exist");
             }
             _logger.LogInformation("Check password user: {0} ", password);
-            var isCorrect = Hash.ComparePasswords(password, existringUser.Password);
+            var isCorrect = Hash.ComparePasswords(password, user.Password);
             _logger.LogInformation("Result comparepass: {0}", isCorrect);
+            _logger.LogInformation("User id {0}", user._Id);
             if (isCorrect)
             {
-                var accessToken = JwtToken.GenerateToken(username);
+                var accessToken = JwtToken.GenerateToken(username,user._Id);
                 var result = new
                 {
-                    existringUser,
+                    user._Id,
+                    user.Name,
                     accessToken
                 };
                 return Ok(result);
@@ -62,19 +66,24 @@ namespace WebApplication1.Controllers
 
             _logger.LogInformation("User: {0}", user);
 
-            await _userService.CreateUser(new User { Name = username, Password = hashPass });
+            await _userService.CreateUser(user);
             _logger.LogInformation("Created user {0} ", (await _userService.GetUserByUsername(username)).ToString());
-            var response =  await _userService.GetUserByUsername(username);
-  
+            var accessToken = JwtToken.GenerateToken(username, user._Id);
+            var response = new
+            {
+                user._Id,
+                user.Name,
+                accessToken
+            };
 
             return Ok(response);
         }
         [HttpGet]
-        public async  Task<string> GetUserByName(string name)
+        public async Task<IActionResult> GetUserByName(string name)
         {
             var result = await _userService.GetUserByUsername(name);
             _logger.LogInformation("User: {0}", result._Id);
-            return result.ToJson();
+            return Ok(result);
         }
 
 

@@ -6,7 +6,11 @@ namespace WebApplication1
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId Id { get; set; }
+        public string Id { get; set; }
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string chatRoomId { get; set; }  
 
         [BsonElement("Text")]
         public string Text { get; set; }

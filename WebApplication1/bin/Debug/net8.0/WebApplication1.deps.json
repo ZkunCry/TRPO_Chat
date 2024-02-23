@@ -9,6 +9,7 @@
       "WebApplication1/1.0.0": {
         "dependencies": {
           "IdentityModel": "6.2.0",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.2",
           "Microsoft.AspNetCore.SignalR": "1.1.0",
           "MongoDB.Driver": "2.23.1",
           "MongoDB.Driver.Core": "2.23.1",
@@ -62,6 +63,17 @@
           "Microsoft.AspNetCore.Http.Abstractions": "2.2.0",
           "Microsoft.Extensions.Logging.Abstractions": "2.2.0",
           "Microsoft.Extensions.Options": "2.2.0"
+        }
+      },
+      "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.2": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.1.2"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
+            "assemblyVersion": "8.0.2.0",
+            "fileVersion": "8.0.224.6804"
+          }
         }
       },
       "Microsoft.AspNetCore.Authorization/2.2.0": {
@@ -263,6 +275,30 @@
           "lib/net8.0/Microsoft.IdentityModel.Logging.dll": {
             "assemblyVersion": "7.3.1.0",
             "fileVersion": "7.3.1.50203"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.Protocols/7.1.2": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "7.3.1",
+          "Microsoft.IdentityModel.Tokens": "7.3.1"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Protocols.dll": {
+            "assemblyVersion": "7.1.2.0",
+            "fileVersion": "7.1.2.41121"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.1.2": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols": "7.1.2",
+          "System.IdentityModel.Tokens.Jwt": "7.3.1"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {
+            "assemblyVersion": "7.1.2.0",
+            "fileVersion": "7.1.2.41121"
           }
         }
       },
@@ -577,6 +613,13 @@
       "path": "microsoft.aspnetcore.authentication.abstractions/2.2.0",
       "hashPath": "microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512"
     },
+    "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7qJkk5k5jabATZZrMIQgpUB9yjDNAAApSqw+8d0FEyK1AJ4j+wv1qOMl2byUr837xbK+MjehtPnQ32yZ5Gtzlw==",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.2",
+      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.2.nupkg.sha512"
+    },
     "Microsoft.AspNetCore.Authorization/2.2.0": {
       "type": "package",
       "serviceable": true,
@@ -793,6 +836,20 @@
       "sha512": "sha512-uPt2aiRUCbcOc0Wk+dDCSClFfPNs3S3Z7fmy50MoxJ1mGmtVUDMpyRJeYzZ/16x4rL19T+g2zrzjcWoitp5+gQ==",
       "path": "microsoft.identitymodel.logging/7.3.1",
       "hashPath": "microsoft.identitymodel.logging.7.3.1.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.Protocols/7.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SydLwMRFx6EHPWJ+N6+MVaoArN1Htt92b935O3RUWPY1yUF63zEjvd3lBu79eWdZUwedP8TN2I5V9T3nackvIQ==",
+      "path": "microsoft.identitymodel.protocols/7.1.2",
+      "hashPath": "microsoft.identitymodel.protocols.7.1.2.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6lHQoLXhnMQ42mGrfDkzbIOR3rzKM1W1tgTeMPLgLCqwwGw0d96xFi/UiX/fYsu7d6cD5MJiL3+4HuI8VU+sVQ==",
+      "path": "microsoft.identitymodel.protocols.openidconnect/7.1.2",
+      "hashPath": "microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512"
     },
     "Microsoft.IdentityModel.Tokens/7.3.1": {
       "type": "package",

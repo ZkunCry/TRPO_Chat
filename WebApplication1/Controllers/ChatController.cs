@@ -49,7 +49,9 @@ namespace WebApplication1.Controllers
                     var update = Builders<ChatRoom>.Update.Set("Participants", chatRoom.Participants);
                     _collection.UpdateOne(filter, update);
 
-                    await _chatHubContext.Clients.Group(chatRoomName).SendAsync("UserEntered", username);
+                    /*  await _chatHubContext.Clients.Group(chatRoomName).SendAsync("UserEntered", username);*/
+                    await _chatHubContext.Clients.Group(chatRoomName).SendAsync("JoinRoom", chatRoomName);
+
 
                     return Ok($"{username} entered the chat room {chatRoomName} successfully.");
                 }

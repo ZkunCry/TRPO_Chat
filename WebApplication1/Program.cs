@@ -8,9 +8,10 @@ using WebApplication1.Hubs;
 using WebApplication1.jwthandler;
 using WebApplication1.middleware;
 using WebApplication1.UserService;
-
-
-
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 internal class Program
 {
     
@@ -30,8 +31,28 @@ internal class Program
             {
                 builder.WithOrigins("http://localhost:3000").
                 AllowAnyHeader().
-                AllowAnyMethod();
+                AllowAnyMethod().AllowCredentials();
 
+            });
+        });
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+        {
+            opt.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+     
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("300046c07bc4876a8596e83cbb34744d6462d8f7238660ad2815c1a433f90e934934c"))
+            };
+        });
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Bearer", policy =>
+            {
+                policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                policy.RequireAuthenticatedUser();
             });
         });
         builder.Services.AddSingleton<IMongoDatabase>(provider =>
