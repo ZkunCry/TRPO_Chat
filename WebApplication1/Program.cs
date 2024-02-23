@@ -55,6 +55,7 @@ internal class Program
                 policy.RequireAuthenticatedUser();
             });
         });
+        builder.Services.AddSingleton<ChatHub>();
         builder.Services.AddSingleton<IMongoDatabase>(provider =>
         {
             string connectStr = "mongodb://localhost:27017";

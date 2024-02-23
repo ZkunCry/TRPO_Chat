@@ -65,7 +65,7 @@ namespace WebApplication1.Controllers
                 return NotFound("Chat room not found.");
             }
         }
-        [HttpPost("createroom")]
+        [HttpPost]
         public async Task<IActionResult> CreateChatRoom(string username, string roomName)
         {
             var user = _collectionUsers.Find(item => item.Name == username).FirstOrDefault();
