@@ -42,10 +42,10 @@ namespace WebApplication1.Controllers
             {
                 if (chatRoom.sender == null)
                 {
-                    chatRoom.sender = joinerId;
+                    chatRoom.sender = userEnter._Id;
 
-                    var filter = Builders<ChatRoom>.Filter.Eq("_id", chatRoom._Id);
-                    var update = Builders<ChatRoom>.Update.Set("SenderId", userEnter._Id);
+                    var filter = Builders<ChatRoom>.Filter.Eq("_Id", chatRoom._Id);
+                    var update = Builders<ChatRoom>.Update.Set("SenderId", ObjectId.Parse( userEnter._Id));
                     _collection.UpdateOne(filter, update);
                     await _chatHubContext.Clients.Group(chatRoom.Name).SendAsync("JoinRoom", chatRoomId);
                     return Ok($"{userEnter.Name} entered the chat room {chatRoom.Name} successfully.");
