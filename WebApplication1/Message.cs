@@ -8,7 +8,6 @@ namespace WebApplication1
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        
         [BsonRepresentation(BsonType.ObjectId)]
         public string chatRoomId { get; set; }  
 

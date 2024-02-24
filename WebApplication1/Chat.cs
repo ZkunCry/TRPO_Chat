@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 namespace WebApplication1
 {
 
@@ -15,13 +16,10 @@ namespace WebApplication1
         [BsonElement("Participants")]
         public List<User> Participants { get; set; }
 
-        [BsonElement("SenderId")]
+        [BsonElement("LastMessage")]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string sender { get; set; }
-
-        [BsonElement("OwnerId")]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string owner { get; set; }
+        public string lastMesageId { get; set;}
+ 
 
     }
 }

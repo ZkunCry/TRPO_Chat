@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Collections.Concurrent;
@@ -20,6 +21,7 @@ namespace WebApplication1.Hubs
         {
             messages = mongoDatabase.GetCollection<Message>("Messages");
             _collectionChatRooms = mongoDatabase.GetCollection<ChatRoom>("ChatRooms");
+            _collection = mongoDatabase.GetCollection<User>("Users");
             this.logger = logger;
         }
         public async Task SendMessage(string chatRoomId,string message,string senderId)
@@ -39,33 +41,36 @@ namespace WebApplication1.Hubs
 
            await  base.OnConnectedAsync();
         }
-        public async Task CreateDialog(string senderId, string chatRoomId)
+        
+        public async Task CreateAndEnterDialog(string ownerId, string enterId)
         {
-            var chatRoom = _collectionChatRooms.Find(c => c._Id == chatRoomId).FirstOrDefault();
-            var userEnter = _collection.Find(user => user._Id == senderId).FirstOrDefault();
-            logger.LogInformation("Entered user: {0}", userEnter.Name);
-            if (chatRoom != null)
+            var existChatRoom = _collectionChatRooms.Find(item => item.Participants[0]._Id == enterId && item.Participants[1]._Id == ownerId).FirstOrDefault();
+            if(existChatRoom == null)
             {
-                if (chatRoom.sender == null)
-                {
-                    chatRoom.sender = userEnter._Id;
-                    var filter = Builders<ChatRoom>.Filter.Eq("_Id", chatRoom._Id);
-                    var update = Builders<ChatRoom>.Update.Set("SenderId", ObjectId.Parse(userEnter._Id));
-                    _collectionChatRooms.UpdateOne(filter, update);
-                    await Groups.AddToGroupAsync(Context.ConnectionId, chatRoomId);
-                    await Clients.Group(chatRoom._Id).SendAsync("onCreateDialog", chatRoom);
-                   
-                }
-                else
-                {
-                    await Clients.Group(chatRoomId).SendAsync("onReceiveError", $"User {userEnter.Name} is already exist");
-                }
+                var owner = _collection.Find(item => item._Id == ownerId).FirstOrDefault();
+                var entered = _collection.Find(item => item._Id == enterId).FirstOrDefault();
+
+                existChatRoom = new ChatRoom { Participants = [owner, entered] };
+                existChatRoom.Name = entered.Name;
+                await _collectionChatRooms.InsertOneAsync(existChatRoom);
+                await Groups.AddToGroupAsync(Context.ConnectionId, existChatRoom._Id);
+                await Clients.Group(existChatRoom._Id).SendAsync("onCreateDialog", existChatRoom);
             }
             else
             {
-                await Clients.Group(chatRoomId).SendAsync("onReceiveError", $"Chatroom with id {chatRoomId} not found");
-
+                await Clients.Group(existChatRoom._Id).SendAsync("onReceiveError", "Current dialog with this user is already exist!");
             }
         }
+        public async Task GetDialogs(string ownerId)
+        {
+            var chatRooms = _collectionChatRooms.Find(item => item.Participants[0]._Id == ownerId || item.Participants[1]._Id ==ownerId).ToList();
+            foreach (var chatRoom in chatRooms)
+            {
+                var secondUserName = chatRoom.Participants[0]._Id ==ownerId ? chatRoom.Participants[1].Name : chatRoom.Participants[0].Name;
+                chatRoom.Name = secondUserName;
+            }
+            await Clients.Caller.SendAsync("onGetDialogs", chatRooms);
+        }
+       
     }
 }

@@ -32,7 +32,7 @@ namespace WebApplication1.Controllers
             await _chatRoomService.SendMessage(roomId, senderId, messageText);
             await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", roomId.ToString(), senderId, messageText);
         }
-        [HttpPost]
+        /*[HttpPost]
         public async Task<IActionResult> EnterChatRoom(string joinerId, string chatRoomId)
         {
             var chatRoom = _collection.Find(c => c._Id == chatRoomId).FirstOrDefault();
@@ -59,8 +59,8 @@ namespace WebApplication1.Controllers
             {
                 return NotFound("Chat room not found.");
             }
-        }
-        [HttpPost]
+        }*/
+      /*  [HttpPost]
         public async Task<IActionResult> CreateChatRoom(string userId, string roomName)
         {
             var user = _collectionUsers.Find(item => item._Id == userId).FirstOrDefault();
@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
             await _collection.InsertOneAsync(chatRoom);
             await _chatHubContext.Clients.Group(roomName).SendAsync("UserEntered", user.Name);
             return Ok($"Chat room {roomName} created successfully for user {user.Name}.");
-        }
+        }*/
 
     }
 }
