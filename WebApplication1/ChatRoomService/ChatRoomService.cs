@@ -32,26 +32,28 @@ namespace WebApplication1.ChatRoomService
 
         public async Task AddMessageToRoom(string roomId, Message message)
         {
-            var filter = Builders<ChatRoom>.Filter.Eq(r => r._Id, roomId);
+          /*  var filter = Builders<ChatRoom>.Filter.Eq(r => r._Id, roomId);
             var update = Builders<ChatRoom>.Update.Push(r => r.Messages, message);
-            await _roomsCollection.UpdateOneAsync(filter, update);
+            await _roomsCollection.UpdateOneAsync(filter, update);*/
         }
         public async Task SendMessage(string roomId, string senderId, string messageText)
         {
-            var message = new Message
-            {
-                Text = messageText,
-                SenderId = senderId,
-                SentAt = DateTime.UtcNow
-            };
+            /* var message = new Message
+             {
+                 Text = messageText,
+                 SenderId = senderId,
+                 SentAt = DateTime.UtcNow
+             };
 
-            await AddMessageToRoom(roomId, message);
+             await AddMessageToRoom(roomId, message);*/
+            
         }
 
         public async Task<List<Message>> GetMessagesForRoom(string roomId)
         {
-            var room = await _roomsCollection.Find(r => r._Id == roomId).FirstOrDefaultAsync();
-            return room?.Messages ?? new List<Message>();
+            return new List<Message> {};
+           /* var room = await _roomsCollection.Find(r => r._Id == roomId).FirstOrDefaultAsync();
+            return room?.Messages ?? new List<Message>();*/
         }
     }
 }

@@ -11,7 +11,6 @@ namespace WebApplication1.UserService
     public class UserService : IUserService
     {
         private readonly IMongoCollection<User> _usersCollection;
-
         public UserService(IMongoDatabase database)
         {
             _usersCollection = database.GetCollection<User>("Users");

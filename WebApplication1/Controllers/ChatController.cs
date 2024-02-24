@@ -18,8 +18,6 @@ namespace WebApplication1.Controllers
         private readonly IChatRoomService _chatRoomService;
         private readonly IMongoCollection<ChatRoom> _collection;
         private readonly IMongoCollection<User> _collectionUsers;
-
-
         public ChatController(IMongoDatabase database, IHubContext<ChatHub> chatHubContext, IChatRoomService chatRoomService, ILogger<ChatController> logger)
         {
             _logger = logger;
@@ -34,30 +32,27 @@ namespace WebApplication1.Controllers
             await _chatRoomService.SendMessage(roomId, senderId, messageText);
             await _chatHubContext.Clients.All.SendAsync("ReceiveMessage", roomId.ToString(), senderId, messageText);
         }
-        [HttpPost("enterroom")]
-        public async Task<IActionResult> EnterChatRoom(string username, string chatRoomName)
+        [HttpPost]
+        public async Task<IActionResult> EnterChatRoom(string joinerId, string chatRoomId)
         {
-            var chatRoom = _collection.Find(c => c.Name == chatRoomName).FirstOrDefault();
-            var userEnter = _collectionUsers.Find(user => user.Name == username).FirstOrDefault();
+            var chatRoom = _collection.Find(c => c._Id == chatRoomId).FirstOrDefault();
+            var userEnter = _collectionUsers.Find(user => user._Id == joinerId).FirstOrDefault();
+            _logger.LogInformation("Entered user: {0}", userEnter.Name);
             if (chatRoom != null)
             {
-                if (!chatRoom.Participants.Contains(new User {Name = username }))
+                if (chatRoom.sender == null)
                 {
-                
-                    chatRoom.Participants.Add(userEnter);
+                    chatRoom.sender = joinerId;
+
                     var filter = Builders<ChatRoom>.Filter.Eq("_id", chatRoom._Id);
-                    var update = Builders<ChatRoom>.Update.Set("Participants", chatRoom.Participants);
+                    var update = Builders<ChatRoom>.Update.Set("SenderId", userEnter._Id);
                     _collection.UpdateOne(filter, update);
-
-                    /*  await _chatHubContext.Clients.Group(chatRoomName).SendAsync("UserEntered", username);*/
-                    await _chatHubContext.Clients.Group(chatRoomName).SendAsync("JoinRoom", chatRoomName);
-
-
-                    return Ok($"{username} entered the chat room {chatRoomName} successfully.");
+                    await _chatHubContext.Clients.Group(chatRoom.Name).SendAsync("JoinRoom", chatRoomId);
+                    return Ok($"{userEnter.Name} entered the chat room {chatRoom.Name} successfully.");
                 }
                 else
                 {
-                    return BadRequest($"{username} is already in the chat room.");
+                    return BadRequest($"{userEnter.Name} is already in the chat room.");
                 }
             }
             else
@@ -66,20 +61,17 @@ namespace WebApplication1.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> CreateChatRoom(string username, string roomName)
+        public async Task<IActionResult> CreateChatRoom(string userId, string roomName)
         {
-            var user = _collectionUsers.Find(item => item.Name == username).FirstOrDefault();
+            var user = _collectionUsers.Find(item => item._Id == userId).FirstOrDefault();
             if(user == null) 
             {
-                return BadRequest($"{username} doesn't exist.");
+                return BadRequest($"User with id = {userId} doesn't exist.");
             }
-            var chatRoom = new ChatRoom { Name = roomName, Participants = new List<User>() };
-            chatRoom.Participants.Add(user);
+            var chatRoom = new ChatRoom { Name = roomName,owner =user._Id };
             await _collection.InsertOneAsync(chatRoom);
-
-            await _chatHubContext.Clients.Group(roomName).SendAsync("UserEntered", username);
-
-            return Ok($"Chat room {roomName} created successfully for user {username}.");
+            await _chatHubContext.Clients.Group(roomName).SendAsync("UserEntered", user.Name);
+            return Ok($"Chat room {roomName} created successfully for user {user.Name}.");
         }
 
     }

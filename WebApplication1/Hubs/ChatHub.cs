@@ -13,7 +13,6 @@ namespace WebApplication1.Hubs
         private readonly IMongoCollection<Message> messages;
         private readonly IMongoCollection<ChatRoom> chatrooms;
         private readonly ILogger<ChatHub> logger;
-        private readonly ConcurrentDictionary<string,string> ConnectedUsers = new ConcurrentDictionary<string,string>();    
         public ChatHub(IMongoDatabase mongoDatabase, ILogger<ChatHub> logger)
         {
             messages = mongoDatabase.GetCollection<Message>("Messages");
@@ -24,22 +23,16 @@ namespace WebApplication1.Hubs
         {
             var newMessage = new Message { chatRoomId = chatRoomId, Text = message };
             await messages.InsertOneAsync(newMessage); 
-
-
         }
         public override async Task OnConnectedAsync()
         {
             var handler = new JwtSecurityTokenHandler();
-      
             var token = handler.ReadJwtToken(Context.GetHttpContext().Request.Query["access_token"]);
-            var userId = token.Claims.GetValueOrDefault("id");
-            ConnectedUsers.TryAdd(Context.ConnectionId, userId);
-            logger.LogInformation("Connected user: {0}", ConnectedUsers[Context.ConnectionId]);
+            var userId = token.Claims.GetValueOrDefault("id");          
             await base.OnConnectedAsync();
         }
         public async Task CreateDialog(string senderId, string chatRoomId)
         {
-
             await Groups.AddToGroupAsync(Context.ConnectionId, chatRoomId);
         }
         public override async Task OnDisconnectedAsync(Exception exception)
@@ -47,10 +40,7 @@ namespace WebApplication1.Hubs
             await Clients.All.SendAsync("Notify", $"{Context.ConnectionId} покинул в чат");
             await base.OnDisconnectedAsync(exception);
         }
-        public void SendMessageToRoom(string roomId, string senderId, string messageText)
-        {
-            Clients.All.SendAsync("ReceiveMessage", roomId, senderId, messageText);
-        }
+      
         public async Task JoinRoom(string roomName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomName);

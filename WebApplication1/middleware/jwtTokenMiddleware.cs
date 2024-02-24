@@ -19,7 +19,7 @@ namespace WebApplication1.middleware
         public async Task InvokeAsync(HttpContext context)
         {
             string path = context.Request.Path.Value;
-            if (path.StartsWith("/Chat") || path.StartsWith("/Messages"))
+            if (/*path.StartsWith("/Chat") || */path.StartsWith("/Messages"))
             {
                 var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
                 if (string.IsNullOrEmpty(token))

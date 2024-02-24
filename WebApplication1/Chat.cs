@@ -15,7 +15,13 @@ namespace WebApplication1
         [BsonElement("Participants")]
         public List<User> Participants { get; set; }
 
-        [BsonElement("Messages")]
-        public List<Message> Messages { get; set; }
+        [BsonElement("SenderId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string sender { get; set; }
+
+        [BsonElement("OwnerId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string owner { get; set; }
+
     }
 }
