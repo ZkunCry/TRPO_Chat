@@ -19,12 +19,11 @@ namespace WebApplication1.Hubs
 
         private readonly ILogger<ChatHub> logger;
 
-        private static ConcurrentDictionary<(string, string), List<UserConnection>> _connectedUsers = 
-            new ConcurrentDictionary<(string, string), List<UserConnection>>();
+        private static ConcurrentDictionary<(string, string), List<ChatRoom>> _connectedUsers = 
+            new ConcurrentDictionary<(string, string), List<ChatRoom>>();
         private  string currentUserId;
         public ChatHub(IMongoDatabase mongoDatabase, ILogger<ChatHub> logger)
         {
-           
             messages = mongoDatabase.GetCollection<Message>("Messages");
             _collectionChatRooms = mongoDatabase.GetCollection<ChatRoom>("ChatRooms");
             _collection = mongoDatabase.GetCollection<User>("Users");
@@ -44,22 +43,23 @@ namespace WebApplication1.Hubs
         {
             logger.LogInformation("Socket id : {0}", Context.ConnectionId);
 
-            string connectionId = Context.ConnectionId;
             var handler = new JwtSecurityTokenHandler();
             var token = handler.ReadJwtToken(Context.GetHttpContext().Request.Query["access_token"]);
             currentUserId = token.Claims.GetValueOrDefault("id");
-            var key = (currentUserId, connectionId);
+            var key = (currentUserId, Context.ConnectionId);
+            var filter = Builders<ChatRoom>.Filter.ElemMatch(x => x.Participants, participant => participant._Id == currentUserId);
+            var chatRooms = _collectionChatRooms.Find(filter).ToList();
+            _connectedUsers.TryAdd(key, chatRooms);
 
-            _connectedUsers.TryAdd(key, new List<UserConnection>());
-
-           await  base.OnConnectedAsync();
+            await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            string userId = Context.User.Identity.Name;
-            string connectionId = Context.ConnectionId;
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(Context.GetHttpContext().Request.Query["access_token"]);
+            currentUserId = token.Claims.GetValueOrDefault("id");
 
-            var key = (userId, connectionId);
+            var key = (currentUserId, Context.ConnectionId);
 
             _connectedUsers.TryRemove(key, out _);
             await base.OnDisconnectedAsync(exception);
@@ -67,23 +67,31 @@ namespace WebApplication1.Hubs
 
         public async Task CreateAndEnterDialog(string ownerId, string enterId)
         {
-            var existChatRoom = _collectionChatRooms.Find(item => item.Participants[0]._Id == enterId && item.Participants[1]._Id == ownerId).FirstOrDefault();
+            var existChatRoom = _collectionChatRooms.Find(item => item.Participants[0]._Id ==
+            enterId && item.Participants[1]._Id == ownerId).FirstOrDefault();
             if(existChatRoom == null)
             {
                 var owner = _collection.Find(item => item._Id == ownerId).FirstOrDefault();
                 var entered = _collection.Find(item => item._Id == enterId).FirstOrDefault();
-
                 existChatRoom = new ChatRoom { Participants = [owner, entered] };
-                existChatRoom.Name = entered.Name;
+           
                 await _collectionChatRooms.InsertOneAsync(existChatRoom);
+                bool hasUser = _connectedUsers.Any(item=>item.Key.Item1 == enterId);  
+                if(hasUser)
+                {
+                   var enterConnectionId = _connectedUsers.FirstOrDefault(item => item.Key.Item1 == enterId).Key.Item2;
+                   var list = _connectedUsers[(entered._Id, enterConnectionId)];
+                   list.Add(existChatRoom);
+                   await Groups.AddToGroupAsync(enterConnectionId, existChatRoom._Id);
+
+                }
                 await Groups.AddToGroupAsync(Context.ConnectionId, existChatRoom._Id);
+                _connectedUsers[(owner._Id, Context.ConnectionId)].Add(existChatRoom);
                 await Clients.Group(existChatRoom._Id).SendAsync("onCreateDialog", existChatRoom);
-               
+             
             }
             else
-            {
                 await Clients.Group(existChatRoom._Id).SendAsync("onReceiveError", "Current dialog with this user is already exist!");
-            }
         }
         public async Task GetDialogs(string ownerId)
         {
