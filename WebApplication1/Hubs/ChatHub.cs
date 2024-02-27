@@ -50,7 +50,9 @@ namespace WebApplication1.Hubs
             var filter = Builders<ChatRoom>.Filter.ElemMatch(x => x.Participants, participant => participant._Id == currentUserId);
             var chatRooms = _collectionChatRooms.Find(filter).ToList();
             _connectedUsers.TryAdd(key, chatRooms);
-
+            foreach (var chatRoom in chatRooms) {
+                await Groups.AddToGroupAsync(Context.ConnectionId, chatRoom._Id);
+            }
             await base.OnConnectedAsync();
         }
         public override async Task OnDisconnectedAsync(Exception exception)
