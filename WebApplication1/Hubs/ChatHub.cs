@@ -105,6 +105,11 @@ namespace WebApplication1.Hubs
             }
             await Clients.Caller.SendAsync("onGetDialogs", chatRooms);
         }
+        public async Task getMessages(string chatRoomId)
+        {
+           var getMessagesResponse =  messages.Find(message => message.chatRoomId == chatRoomId).ToList();
+            await Clients.Caller.SendAsync("onGetMessages", getMessagesResponse);
+        }
        
     }
 }
