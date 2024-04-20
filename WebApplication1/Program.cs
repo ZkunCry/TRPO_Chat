@@ -19,10 +19,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         builder.Services.AddSignalR();
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddCors(opt =>
@@ -58,8 +56,8 @@ internal class Program
         builder.Services.AddSingleton<ChatHub>();
         builder.Services.AddSingleton<IMongoDatabase>(provider =>
         {
-            string connectStr = "mongodb://localhost:27017";
-            var client = new MongoClient(connectStr);
+            var connectStr = provider.GetRequiredService<IConfiguration>();
+            var client = new MongoClient(connectStr.GetConnectionString("mongo"));
             return client.GetDatabase("TRPOChat");
 
         });
@@ -67,8 +65,6 @@ internal class Program
         builder.Services.AddSingleton<IChatRoomService, ChatRoomService>();
 
         builder.Services.AddSingleton<IUserService,UserService>();
-       
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

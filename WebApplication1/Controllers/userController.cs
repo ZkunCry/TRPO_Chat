@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using WebApplication1.jwthandler;
@@ -52,7 +53,7 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string username,string password)
         {
-         
+            _logger.LogInformation("URL server: {0}", HttpContext.Request.GetDisplayUrl());
             var existingUser = await _userService.GetUserByUsername(username);
             _logger.LogInformation("exist:{0} ", existingUser);
             if (existingUser != null)
